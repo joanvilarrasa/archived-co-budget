@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>COB</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.11/dist/basecoat.cdn.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.11/dist/js/all.min.js" defer></script>
+        <script type="module" src="/datastar.js"></script>
+        <link rel="stylesheet" href="/main.css">
+    </head>
+    <body class="w-screen h-screen flex flex-col overflow-hidden" data-signals="{page: 'dashboard'}">
+            <nav class="flex gap-2 w-full border-b px-2 py-1 items-center">
+                <h1>{{.NavHeader}}</h1>
+                <button data-show="$page != 'dashboard'" class="btn-link" style="color: var(--muted-foreground);" data-on:click="$page='dashboard'">Dashboard</button>
+                <button data-show="$page == 'dashboard'" class="btn-link underline font-bold">Dashboard</button>
+                <button data-show="$page != 'expenses'" class="btn-link" style="color: var(--muted-foreground);" data-on:click="$page='expenses'">Expenses</button>
+                <button data-show="$page == 'expenses'" class="btn-link underline font-bold">Expenses</button>
+                <button data-show="$page != 'accounts'" class="btn-link" style="color: var(--muted-foreground);" data-on:click="$page='accounts'">Accounts</button>
+                <button data-show="$page == 'accounts'" class="btn-link underline font-bold">Accounts</button>
+                <button data-show="$page != 'budgets'" class="btn-link" style="color: var(--muted-foreground);" data-on:click="$page='budgets'">Budgets</button>
+                <button data-show="$page == 'budgets'" class="btn-link underline font-bold">Budgets</button>
+                <button data-show="$page != 'tags'" class="btn-link" style="color: var(--muted-foreground);" data-on:click="$page='tags'">Tags</button>
+                <button data-show="$page == 'tags'" class="btn-link underline font-bold">Tags</button>
+            </nav>
+            <main id="page" data-show="$page == 'dashboard'" >
+                Dashboard page
+            </main>
+            <main id="page" data-show="$page == 'expenses'" >
+                Expenses page
+            </main>
+            <main id="page" data-show="$page == 'accounts'" >
+                Accounts page
+            </main>
+            <main id="page" data-show="$page == 'budgets'" >
+                Budgets page
+            </main>
+            <main id="page" data-show="$page == 'tags'" >
+                Tags page
+            </main>
+    </body>
+</html>

@@ -11,7 +11,7 @@ import (
 var count atomic.Int64
 
 func main() {
-	http.HandleFunc("/", home)
+	http.HandleFunc("/", firstRender)
 	http.HandleFunc("/increment", increment)
 	http.HandleFunc("/datastar.js", datastarJS)
 	http.HandleFunc("/main.css", mainCss)
@@ -25,9 +25,9 @@ func main() {
 	}
 }
 
-func home(w http.ResponseWriter, r *http.Request) {
+func firstRender(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	http.ServeFile(w, r, "home.html")
+	fmt.Fprint(w, home())
 }
 
 func increment(w http.ResponseWriter, r *http.Request) {
