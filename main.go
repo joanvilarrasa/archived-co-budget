@@ -1,6 +1,7 @@
 package main
 
 import (
+	"co-budget/app"
 	"fmt"
 	"net/http"
 	"sync/atomic"
@@ -27,7 +28,7 @@ func main() {
 
 func firstRender(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprint(w, home())
+	fmt.Fprint(w, app.Layout())
 }
 
 func increment(w http.ResponseWriter, r *http.Request) {
