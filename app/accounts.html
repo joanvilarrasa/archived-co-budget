@@ -2,61 +2,56 @@
     <h2 class="text-lg font-semibold">Accounts</h2>
 
     {{if .Error}}
-    <div class="rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+    <div class="border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
         {{.Error}}
     </div>
     {{end}}
 
-    <button type="button" onclick="document.getElementById('create-account-dialog').showModal()" class="btn-outline">New
-        Account</button>
+    <div class="flex w-full items-center justify-end">
+        <button type="button" onclick="document.getElementById('create-account-dialog').showModal()"
+            class="btn-primary">New Account</button>
+    </div>
 
-    <dialog id="create-account-dialog" class="dialog" aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
-        <div class="flex flex-col">
+    <dialog id="create-account-dialog" class="dialog">
+        <form action="/accounts" method="post"
+            data-on:submit="evt.preventDefault(); @post('/accounts', {contentType: 'form'}).then(() => { evt.target.reset(); }); document.getElementById('create-account-dialog').close()"
+            class="flex flex-col gap-2 text-[var(--color-foreground)]">
+            <header class="flex gap-2 w-full">
+                <h2 id="alert-dialog-title">Create a new account</h2>
+            </header>
 
-            <form action="/accounts" method="post"
-                data-on:submit="evt.preventDefault(); @post('/accounts', {contentType: 'form'}).then(() => { evt.target.reset(); }); document.getElementById('create-account-dialog').close()"
-                class="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <header>
-                    <h2 id="alert-dialog-title">Create a new account</h2>
-                    <p id="alert-dialog-description">This will create a new account in the system</p>
-                </header>
-
-                <label class="flex flex-col gap-1 text-sm">
-                    Name
+            <div class="flex gap-4">
+                <div class="flex flex-col gap-2 w-[300px]">
+                    <label class="label">Name</label>
                     <input class="input" type="text" name="name" required />
-                </label>
-
-                <label class="flex flex-col gap-1 text-sm">
-                    Type
-                    <select class="input" name="type" required>
-                        <option value="LTB">LTB</option>
-                        <option value="MTB">MTB</option>
-                        <option value="STB">STB</option>
-                    </select>
-                </label>
-
-                <label class="flex flex-col gap-1 text-sm md:col-span-2">
-                    Description
-                    <input class="input" type="text" name="description" required />
-                </label>
-
-                <label class="flex flex-col gap-1 text-sm">
-                    Initial balance
-                    <input class="input" type="number" name="initial_balance" required step="0.01" />
-                </label>
-
-                <div class="flex items-end">
-                    <button class="btn-primary" type="submit">Create account</button>
                 </div>
-                <footer>
-                    <button class="btn-outline"
-                        onclick="document.getElementById('create-account-dialog').close()">Cancel</button>
-                    <button class="btn-primary" type="submit">Create</button>
-                </footer>
-            </form>
+                <div class="flex flex-col gap-2">
+                    <label class="label">Type</label>
+                    <select class="select w-[100px]" name="type" required>
+                        <optgroup label="Type">
+                            <option value="LTB">LTB</option>
+                            <option value="MTB">MTB</option>
+                            <option value="STB">STB</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="label whitespace-nowrap">Initial balance</label>
+                    <input class="input" type="number" name="initial_balance" required step="100.00" />
+                </div>
+            </div>
 
-        </div>
+            <div class="flex flex-col gap-2">
+                <label class="label">Description</label>
+                <input class="input" type="text" name="description" required />
+            </div>
+
+            <footer class="flex w-full items-center justify-end gap-2">
+                <button class="btn-outline" type="button"
+                    onclick="document.getElementById('create-account-dialog').close()">Cancel</button>
+                <button class="btn-primary" type="submit">Create</button>
+            </footer>
+        </form>
     </dialog>
 
     <section class="rounded border p-4">
