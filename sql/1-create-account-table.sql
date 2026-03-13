@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS accounts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    initial_balance REAL NOT NULL,
+    type TEXT NOT NULL CHECK(type IN ('LTB', 'MTB', 'STB'))
+)

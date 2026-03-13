@@ -1,32 +1,25 @@
 package main
 
 import (
-	"co-budget/app"
+	"co-budget/data"
+	"co-budget/lib"
+	"co-budget/server"
+	"context"
 	"fmt"
-	"net/http"
 )
 
 func main() {
-	http.HandleFunc("/", firstRender)
-	http.HandleFunc("/datastar.js", datastarJS)
-	http.HandleFunc("/main.css", mainCss)
+	db, dbErr := lib.OpenSQLite("./db.sqlite", "./sql")
+	if dbErr != nil {
+		panic(dbErr)
+	}
+	defer db.Close()
+
+	data.InitAccountsDB(db, context.Background())
+	httpServer := server.NewHTTPServer()
 
 	fmt.Println("listening on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := httpServer.ListenAndServe(); err != nil {
 		panic(err)
 	}
-}
-
-func firstRender(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprint(w, app.Layout())
-}
-
-func datastarJS(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "datastar.js")
-}
-
-func mainCss(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/css; charset=utf-8")
-	http.ServeFile(w, r, "main.css")
 }

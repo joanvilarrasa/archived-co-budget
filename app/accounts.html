@@ -1,3 +1,81 @@
-<div class="flex flex-1 flex-col items-center justify-center">
-    Accounts page
+<div class="flex flex-1 flex-col gap-4 p-4 overflow-auto">
+    <h2 class="text-lg font-semibold">Accounts</h2>
+
+    {{if .Error}}
+    <div class="rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+        {{.Error}}
+    </div>
+    {{end}}
+
+    <section class="rounded border p-4">
+        <h3 class="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">Create account</h3>
+        <form action="/accounts" method="post" class="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <label class="flex flex-col gap-1 text-sm">
+                Name
+                <input class="input" type="text" name="name" required />
+            </label>
+
+            <label class="flex flex-col gap-1 text-sm">
+                Type
+                <select class="input" name="type" required>
+                    <option value="LTB">LTB</option>
+                    <option value="MTB">MTB</option>
+                    <option value="STB">STB</option>
+                </select>
+            </label>
+
+            <label class="flex flex-col gap-1 text-sm md:col-span-2">
+                Description
+                <input class="input" type="text" name="description" required />
+            </label>
+
+            <label class="flex flex-col gap-1 text-sm">
+                Initial balance
+                <input class="input" type="number" name="initial_balance" required step="0.01" />
+            </label>
+
+            <div class="flex items-end">
+                <button class="btn-primary" type="submit">Create account</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="rounded border p-4">
+        <h3 class="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">Existing accounts</h3>
+        {{if .Accounts}}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead>
+                    <tr class="border-b">
+                        <th class="px-2 py-2">Name</th>
+                        <th class="px-2 py-2">Description</th>
+                        <th class="px-2 py-2">Type</th>
+                        <th class="px-2 py-2">Initial Balance</th>
+                        <th class="px-2 py-2">Created</th>
+                        <th class="px-2 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Accounts}}
+                    <tr class="border-b">
+                        <td class="px-2 py-2">{{.Name}}</td>
+                        <td class="px-2 py-2">{{.Description}}</td>
+                        <td class="px-2 py-2">{{.Type}}</td>
+                        <td class="px-2 py-2">{{.InitialBalance}}</td>
+                        <td class="px-2 py-2">{{.CreatedAt}}</td>
+                        <td class="px-2 py-2">
+                            <form action="/accounts/delete" method="post">
+                                <input type="hidden" name="id" value="{{.ID}}" />
+                                <button class="btn-link text-red-700" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+        {{else}}
+        <p class="text-sm text-gray-600">No accounts yet.</p>
+        {{end}}
+    </section>
 </div>
