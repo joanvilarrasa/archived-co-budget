@@ -15,7 +15,7 @@ func main() {
 	}
 	defer db.Close()
 
-	data.InitAccountsDB(db, context.Background())
+	data.InitAccountStore(db, context.Background(), dbErr)
 	httpServer := server.NewHTTPServer()
 
 	fmt.Println("listening on http://localhost:8080")

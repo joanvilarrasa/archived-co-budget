@@ -17,7 +17,7 @@ type HomeProps struct {
 func Layout() string {
 	layoutdata := HomeProps{
 		Dashboard:   Dashboard(),
-		Accounts:    Accounts(accountsError),
+		Accounts:    Accounts(),
 		Budgets:     Budgets(),
 		Expenses:    Expenses(),
 		InitialPage: "dashboard",

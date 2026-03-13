@@ -30,9 +30,8 @@ func NewHTTPServer() *http.Server {
 }
 
 func (s *HTTPServer) firstRender(w http.ResponseWriter, r *http.Request) {
-	initialPage := sanitizePage(r.URL.Query().Get("page"))
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprint(w, app.Layout(r.URL.Query().Get("error"), initialPage))
+	fmt.Fprint(w, app.Layout())
 }
 
 func (s *HTTPServer) createAccount(w http.ResponseWriter, r *http.Request) {
