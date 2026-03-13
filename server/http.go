@@ -3,12 +3,19 @@ package server
 import (
 	"co-budget/app"
 	"co-budget/data"
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/starfederation/datastar-go/datastar"
 )
+
+type HttpServerResponseDTO struct {
+	Succes  bool   `json:"succes"`
+	Message string `json:"message"`
+}
 
 type HTTPServer struct {
 }
@@ -18,7 +25,10 @@ func NewHTTPServer() *http.Server {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", srv.firstRender)
-	mux.HandleFunc("/accounts", srv.createAccount)
+	mux.HandleFunc("/accounts", func(w http.ResponseWriter, r *http.Request) {
+		statusCode, response := srv.createAccount(w, r)
+		writeJsonResponse(w, statusCode, response)
+	})
 	mux.HandleFunc("/accounts/delete", srv.deleteAccount)
 	mux.HandleFunc("/datastar.js", datastarJS)
 	mux.HandleFunc("/main.css", mainCss)
@@ -29,20 +39,30 @@ func NewHTTPServer() *http.Server {
 	}
 }
 
+func writeJsonResponse(w http.ResponseWriter, statusCode int, response HttpServerResponseDTO) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	_ = json.NewEncoder(w).Encode(response)
+}
+
 func (s *HTTPServer) firstRender(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	fmt.Fprint(w, app.Layout())
 }
 
-func (s *HTTPServer) createAccount(w http.ResponseWriter, r *http.Request) {
+func (s *HTTPServer) createAccount(w http.ResponseWriter, r *http.Request) (int, HttpServerResponseDTO) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
+		return http.StatusMethodNotAllowed, HttpServerResponseDTO{
+			Succes:  false,
+			Message: "method_not_allowed",
+		}
 	}
 
 	if parseErr := r.ParseForm(); parseErr != nil {
-		redirectAccounts(w, r, "Invalid form body")
-		return
+		return http.StatusBadRequest, HttpServerResponseDTO{
+			Succes:  false,
+			Message: "The form body is invalid",
+		}
 	}
 
 	name := strings.TrimSpace(r.FormValue("name"))
@@ -51,32 +71,43 @@ func (s *HTTPServer) createAccount(w http.ResponseWriter, r *http.Request) {
 	balanceRaw := strings.TrimSpace(r.FormValue("initial_balance"))
 
 	if name == "" || description == "" || balanceRaw == "" {
-		redirectAccounts(w, r, "Name, description and initial balance are required")
-		return
+		return http.StatusBadRequest, HttpServerResponseDTO{
+			Succes:  false,
+			Message: "Name, description and initial balance are required fields",
+		}
 	}
 
 	if !isValidAccountType(accountType) {
-		redirectAccounts(w, r, "Type must be one of LTB, MTB or STB")
-		return
+		return http.StatusBadRequest, HttpServerResponseDTO{
+			Succes:  false,
+			Message: "The account type is invalid",
+		}
 	}
 
 	initialBalance, parseErr := strconv.ParseFloat(balanceRaw, 64)
 	if parseErr != nil {
-		redirectAccounts(w, r, "Initial balance must be a number")
-		return
+		return http.StatusBadRequest, HttpServerResponseDTO{
+			Succes:  false,
+			Message: "Initial balance must be a number",
+		}
 	}
 
-	if data.AccountsStore == nil {
-		redirectAccounts(w, r, "Accounts store not initialized")
-		return
+	createRes := data.AccountCreate(name, description, initialBalance, accountType)
+	switch createRes {
+	case data.AS_Ok:
+		s.patchAccounts(w, r)
+		return http.StatusAccepted, HttpServerResponseDTO{
+			Succes:  true,
+			Message: "Created successfully",
+		}
+
+	default:
+		return http.StatusInternalServerError, HttpServerResponseDTO{
+			Succes:  false,
+			Message: "Some uncontrolled error has ocurred",
+		}
 	}
 
-	if createErr := data.AccountsStore.Create(name, description, initialBalance, accountType); createErr != nil {
-		redirectAccounts(w, r, "Failed to create account")
-		return
-	}
-
-	redirectAccounts(w, r, "")
 }
 
 func (s *HTTPServer) deleteAccount(w http.ResponseWriter, r *http.Request) {
@@ -86,28 +117,23 @@ func (s *HTTPServer) deleteAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if parseErr := r.ParseForm(); parseErr != nil {
-		redirectAccounts(w, r, "Invalid delete request")
+		s.patchAccounts(w, r)
 		return
 	}
 
 	idRaw := strings.TrimSpace(r.FormValue("id"))
 	id, parseErr := strconv.ParseInt(idRaw, 10, 64)
 	if parseErr != nil {
-		redirectAccounts(w, r, "Invalid account id")
+		s.patchAccounts(w, r)
 		return
 	}
 
-	if data.AccountsStore == nil {
-		redirectAccounts(w, r, "Accounts store not initialized")
+	if deleteRes := data.AccountDelete(id); deleteRes != data.AS_Ok {
+		s.patchAccounts(w, r)
 		return
 	}
 
-	if deleteErr := data.AccountsStore.Delete(id); deleteErr != nil {
-		redirectAccounts(w, r, "Failed to delete account")
-		return
-	}
-
-	redirectAccounts(w, r, "")
+	s.patchAccounts(w, r)
 }
 
 func datastarJS(w http.ResponseWriter, r *http.Request) {
@@ -128,15 +154,11 @@ func sanitizePage(page string) string {
 	}
 }
 
-func redirectAccounts(w http.ResponseWriter, r *http.Request, message string) {
-	redirectURL := "/?page=accounts"
-	if message != "" {
-		redirectURL = redirectURL + "&error=" + url.QueryEscape(message)
-	}
-
-	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
-}
-
 func isValidAccountType(accountType string) bool {
 	return accountType == "LTB" || accountType == "MTB" || accountType == "STB"
+}
+
+func (s *HTTPServer) patchAccounts(w http.ResponseWriter, r *http.Request) {
+	sse := datastar.NewSSE(w, r)
+	sse.PatchElements(app.Accounts())
 }

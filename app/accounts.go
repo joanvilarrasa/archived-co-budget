@@ -20,10 +20,14 @@ type AccountsProps struct {
 }
 
 func Accounts() string {
+	return AccountsWithError("")
+}
+
+func AccountsWithError(requestError string) string {
 
 	accounts, accountsRes := data.AccountGetAll()
-	var errorMessage string = ""
-	if accountsRes != data.AS_Ok {
+	errorMessage := requestError
+	if accountsRes != data.AS_Ok && errorMessage == "" {
 		errorMessage = "Error retrieving accounts"
 	}
 

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 	"time"
 )
@@ -41,6 +42,7 @@ type AccountStore struct {
 var store *AccountStore
 
 func InitAccountStore(db *sql.DB, ctx context.Context, initErr error) {
+	log.Printf("[account-store] InitAccountStore init")
 	if db == nil {
 		initErr = fmt.Errorf("[account-store] db is nil")
 	}
@@ -60,7 +62,7 @@ func InitAccountStore(db *sql.DB, ctx context.Context, initErr error) {
 		log.Printf("[account-store] db failed to retrieve all the accounts")
 		store.initErr = fmt.Errorf("[account-store] db failed to retrieve all the accounts")
 	}
-	log.Printf("[account-store] initialized successfully")
+	log.Printf("[account-store] InitAccountStore end ok")
 }
 
 func (s *AccountStore) isAccountStoreActive() AccountStoreResponse {
@@ -124,7 +126,10 @@ func AccountCreate(name string, description string, initialBalance float64, acco
 		log.Printf("[account-store] failed to create account because %s", isActive)
 		return isActive
 	}
-	// TODO(jv): sanitize the string so that we do not get query injected!
+	// TODO(jv): Improve this for security
+	name = sanitizeAccountText(name)
+	description = sanitizeAccountText(description)
+	accountType = sanitizeAccountText(accountType)
 	result, err := store.db.ExecContext(
 		store.ctx,
 		`INSERT INTO accounts(name, description, initial_balance, type) VALUES(?, ?, ?, ?)`,
@@ -165,7 +170,10 @@ func AccountUpdate(id int64, name string, description string, initialBalance flo
 		log.Printf("[account-store] failed to update account because %s", isActive)
 		return isActive
 	}
-	// TODO(jv): sanitize the string so that we do not get query injected!
+	// TODO(jv): Improve this for security
+	name = sanitizeAccountText(name)
+	description = sanitizeAccountText(description)
+	accountType = sanitizeAccountText(accountType)
 	_, err := store.db.ExecContext(
 		store.ctx,
 		`UPDATE accounts SET name = ?, description = ?, initial_balance = ?, type = ? WHERE id = ?`,
@@ -248,4 +256,9 @@ func AccountGetOne(id int64) (*Account, AccountStoreResponse) {
 	}
 	log.Printf("[account-store] failed to get one account because account not found")
 	return nil, AS_AccountNotFound
+}
+
+func sanitizeAccountText(value string) string {
+	value = strings.TrimSpace(value)
+	return strings.ReplaceAll(value, "\x00", "")
 }

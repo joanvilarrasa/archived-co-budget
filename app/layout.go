@@ -7,20 +7,18 @@ func navHeader() string {
 }
 
 type HomeProps struct {
-	Dashboard   string
-	Accounts    string
-	Budgets     string
-	Expenses    string
-	InitialPage string
+	DashboardPage string
+	AccountsPage  string
+	BudgetsPage   string
+	ExpensesPage  string
 }
 
 func Layout() string {
 	layoutdata := HomeProps{
-		Dashboard:   Dashboard(),
-		Accounts:    Accounts(),
-		Budgets:     Budgets(),
-		Expenses:    Expenses(),
-		InitialPage: "dashboard",
+		DashboardPage: Dashboard(),
+		AccountsPage:  Accounts(),
+		BudgetsPage:   Budgets(),
+		ExpensesPage:  Expenses(),
 	}
 	return lib.ParseHtmlTemplate("./app/layout.html", layoutdata)
 }

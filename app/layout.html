@@ -10,7 +10,7 @@
         <script type="module" src="/datastar.js"></script>
         <link rel="stylesheet" href="/main.css">
     </head>
-    <body class="w-screen h-screen flex flex-col overflow-hidden" data-signals="{page: '{{.InitialPage}}'}">
+    <body class="w-screen h-screen flex flex-col overflow-hidden">
             <nav class="flex gap-2 w-full border-b px-2 py-1 items-center">
                 <h1>CO Budget</h1>
                 <button data-show="$page != 'dashboard'" class="btn-link" style="color: var(--muted-foreground);" data-on:click="$page='dashboard'">Dashboard</button>
@@ -23,16 +23,16 @@
                 <button data-show="$page == 'budgets'" class="btn-link underline font-bold">Budgets</button>
             </nav>
             <main class="flex flex-1 flex-col" data-show="$page == 'dashboard'" >
-                {{.Dashboard}}
+                {{.DashboardPage}}
             </main>
             <main class="flex flex-1 flex-col" data-show="$page == 'expenses'" >
-                {{.Expenses}}
+                {{.ExpensesPage}}
             </main>
             <main class="flex flex-1 flex-col" data-show="$page == 'accounts'" >
-                {{.Accounts}}
+                {{.AccountsPage}}
             </main>
             <main class="flex flex-1 flex-col" data-show="$page == 'budgets'" >
-                {{.Budgets}}
+                {{.BudgetsPage}}
             </main>
     </body>
 </html>
