@@ -2,14 +2,14 @@ package main
 
 import (
 	"co-budget/data"
-	"co-budget/lib"
+	"co-budget/database"
 	"co-budget/server"
 	"context"
 	"fmt"
 )
 
 func main() {
-	db, dbErr := lib.OpenSQLite("./db.sqlite", "./sql")
+	db, dbErr := database.OpenSQLite("./db.sqlite", "./database")
 	if dbErr != nil {
 		panic(dbErr)
 	}
