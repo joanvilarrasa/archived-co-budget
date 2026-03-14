@@ -1,0 +1,43 @@
+<script data-ignore-morph>
+    function openCreateAccountDialog() {
+        const form = document.getElementById('account-form');
+        form.action = '/accounts/new';
+        document.getElementById('account-dialog-title').textContent = 'Create a new account';
+        document.getElementById('account-submit-button').textContent = 'Create';
+        document.getElementById('account-id').value = '';
+        document.getElementById('account-name').value = '';
+        document.getElementById('account-description').value = '';
+        document.getElementById('account-type').value = 'LTB';
+        document.getElementById('account-initial-balance').value = '';
+        document.getElementById('account-dialog').showModal();
+    }
+
+    function openUpdateAccountDialog(button) {
+        const form = document.getElementById('account-form');
+        form.action = '/accounts/update';
+        document.getElementById('account-dialog-title').textContent = 'Update account';
+        document.getElementById('account-submit-button').textContent = 'Update';
+        document.getElementById('account-id').value = button.dataset.id || '';
+        document.getElementById('account-name').value = button.dataset.name || '';
+        document.getElementById('account-description').value = button.dataset.description || '';
+        document.getElementById('account-type').value = button.dataset.type || 'LTB';
+        document.getElementById('account-initial-balance').value = button.dataset.initialBalance || '';
+        document.getElementById('account-dialog').showModal();
+    }
+
+    async function submitAccountForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            },
+            body: new URLSearchParams(new FormData(form)).toString(),
+        });
+        if (response.ok) {
+            form.reset();
+            document.getElementById('account-dialog').close();
+        }
+    }
+</script>

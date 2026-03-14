@@ -27,15 +27,8 @@
             document.documentElement.classList.toggle("dark");
             document.documentElement.classList.contains("dark")
         }
-        function openUpdateAccountDialog(button) {
-            document.getElementById('update-account-id').value = button.dataset.id || '';
-            document.getElementById('update-account-name').value = button.dataset.name || '';
-            document.getElementById('update-account-description').value = button.dataset.description || '';
-            document.getElementById('update-account-type').value = button.dataset.type || 'LTB';
-            document.getElementById('update-account-balance').value = button.dataset.initialBalance || '0';
-            document.getElementById('update-account-dialog').showModal();
-        }
     </script>
+    {{.AccountsScript}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">

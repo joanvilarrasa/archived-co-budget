@@ -13,7 +13,7 @@ var (
 	htmlTemplateCacheMu sync.RWMutex
 )
 
-func ParseHtmlTemplate(path string, data any) string {
+func ParseHtmlTemplate(path string, data any, cacheString bool) string {
 	htmlTemplateCacheMu.RLock()
 	cachedTemplate, exists := htmlTemplateCache[path]
 	htmlTemplateCacheMu.RUnlock()

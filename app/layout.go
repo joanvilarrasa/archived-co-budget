@@ -10,7 +10,8 @@ type HomeProps struct {
 
 func Layout() string {
 	layoutdata := Props{
-		"AccountsPage": Accounts(),
+		"AccountsPage":   Accounts(),
+		"AccountsScript": AccountsScript(),
 	}
-	return lib.ParseHtmlTemplate("./app/layout.html", layoutdata)
+	return lib.ParseHtmlTemplate("./app/layout.html", layoutdata, false)
 }

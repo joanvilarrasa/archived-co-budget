@@ -16,5 +16,10 @@ func Accounts() string {
 		"AccountsList": accounts,
 	}
 
-	return lib.ParseHtmlTemplate("./app/accounts/page.html", props)
+	return lib.ParseHtmlTemplate("./app/accounts/page.html", props, true)
+}
+
+func AccountsScript() string {
+	props := Props{}
+	return lib.ParseHtmlTemplate("./app/accounts/script.html", props, false)
 }
