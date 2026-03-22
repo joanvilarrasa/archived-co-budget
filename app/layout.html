@@ -35,9 +35,9 @@
     <link rel="stylesheet" href="/main.css">
 </head>
 
-<body id="thebody" class="w-screen h-screen flex flex-col overflow-hidden" data-signals:page="'accounts'"
+<body id="thebody" class="w-screen h-screen flex flex-col" data-signals:page="'accounts'"
     data-on:custompageloaded="@get('/sse')">
-    <nav class="flex gap-2 w-full border-b px-2 py-1 items-center">
+    <nav class="flex gap-2 w-full border-b px-4 py-1 items-center">
         <h1>CO Budget</h1>
         <button data-show="$page != 'accounts'" class="btn-link" style="color: var(--muted-foreground);"
             data-on:click="$page='accounts'">Accounts</button>

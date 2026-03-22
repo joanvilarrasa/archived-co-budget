@@ -1,5 +1,9 @@
 # CO Budget
 
+> **⚠️⚠️⚠️ WARNING: PROJECT ABANDONED ⚠️⚠️⚠️**
+>
+> I am **abandoning this project** because I am not having fun with it, and I'm not sure this is the right direction to go.
+
 ## Summary
 
 CO Budget is an experimental application to try Datastar in a real project.

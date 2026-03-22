@@ -1,4 +1,4 @@
-<div id="accounts-page" class="flex flex-1 flex-col gap-4 p-4 overflow-auto">
+<div id="accounts-page" class="flex flex-1 flex-col gap-4 p-4">
     {{if .Error}}
     <div class="border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
         {{.Error}}
@@ -55,8 +55,7 @@
         </form>
     </dialog>
 
-    <section class="rounded border p-4">
-        <h3 class="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">Existing accounts</h3>
+    <section class="rounded border flex-1">
         {{if .AccountsList}}
         <div id="accounts-table" class="overflow-x-auto">
             <table class="w-full text-left text-sm">
@@ -70,7 +69,7 @@
                         <th class="px-2 py-2">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="accounts-table-body">
+                <tbody id="accounts-table-body" class="overflow-y-auto">
                     {{range .AccountsList}}
                     <tr class="border-b">
                         <td class="px-2 py-2">{{.Name}}</td>
